@@ -1,1 +1,189 @@
-<h1> DBMS</h1>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+
+    /* Header */
+    header {
+      background-color: #3f51b5;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    /* Navigation */
+    nav {
+      background-color: #303f9f;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav a {
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    nav a:hover {
+      background-color: #1a237e;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      color: #303f9f;
+    }
+
+    /* Book Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ddd;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #3f51b5;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    /* Forms */
+    form {
+      background-color: white;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    form input,
+    form select {
+      padding: 10px;
+      margin: 8px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    form button {
+      background-color: #3f51b5;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    form button:hover {
+      background-color: #303f9f;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Library Management System</h1>
+  </header>
+
+  <nav>
+    <a href="#book-list">Book List</a>
+    <a href="#add-book">Add Book</a>
+    <a href="#search-book">Search Book</a>
+  </nav>
+
+  <div class="container">
+    <!-- Book List Section -->
+    <section id="book-list">
+      <h2>Book List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Genre</th>
+            <th>Availability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Harry Potter</td>
+            <td>J.K. Rowling</td>
+            <td>Fantasy</td>
+            <td>Available</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>The Alchemist</td>
+            <td>Paulo Coelho</td>
+            <td>Fiction</td>
+            <td>Issued</td>
+          </tr>
+          <!-- More books can be added here -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Add Book Section -->
+    <section id="add-book">
+      <h2>Add New Book</h2>
+      <form>
+        <input type="text" placeholder="Book Title" required>
+        <input type="text" placeholder="Author" required>
+        <input type="text" placeholder="Genre" required>
+        <select>
+          <option value="available">Available</option>
+          <option value="issued">Issued</option>
+        </select>
+        <button type="submit">Add Book</button>
+      </form>
+    </section>
+
+    <!-- Search Book Section -->
+    <section id="search-book">
+      <h2>Search Book</h2>
+      <form>
+        <input type="text" placeholder="Search by title or author">
+        <button type="submit">Search</button>
+      </form>
+    </section>
+  </div>
+</body>
+
+</html>
