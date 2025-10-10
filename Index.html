@@ -31,6 +31,7 @@
       background-color: #303f9f;
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     nav a {
@@ -55,7 +56,7 @@
       color: #303f9f;
     }
 
-    /* Book Table */
+    /* Table */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -124,6 +125,7 @@
     <a href="#book-list">Book List</a>
     <a href="#add-book">Add Book</a>
     <a href="#search-book">Search Book</a>
+    <a href="#fine-management">Fine Management</a>
   </nav>
 
   <div class="container">
@@ -155,7 +157,27 @@
             <td>Fiction</td>
             <td>Issued</td>
           </tr>
-          <!-- More books can be added here -->
+          <tr>
+            <td>3</td>
+            <td>A Brief History of Time</td>
+            <td>Stephen Hawking</td>
+            <td>Science</td>
+            <td>Available</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Wings of Fire</td>
+            <td>A.P.J. Abdul Kalam</td>
+            <td>Biography</td>
+            <td>Available</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>The Art of War</td>
+            <td>Sun Tzu</td>
+            <td>History</td>
+            <td>Issued</td>
+          </tr>
         </tbody>
       </table>
     </section>
@@ -180,7 +202,62 @@
       <h2>Search Book</h2>
       <form>
         <input type="text" placeholder="Search by title or author">
+        <label for="genre">Select Book Type:</label>
+        <select id="genre" name="genre">
+          <option value="">-- Select Genre --</option>
+          <option value="fiction">Fiction</option>
+          <option value="fantasy">Fantasy</option>
+          <option value="science">Science</option>
+          <option value="biography">Biography</option>
+          <option value="history">History</option>
+          <option value="technology">Technology</option>
+          <option value="education">Education</option>
+          <option value="mystery">Mystery</option>
+          <option value="selfhelp">Self Help</option>
+        </select>
         <button type="submit">Search</button>
+      </form>
+    </section>
+
+    <!-- Fine Management Section -->
+    <section id="fine-management">
+      <h2>Fine Management</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Borrower Name</th>
+            <th>Book Title</th>
+            <th>Issued Date</th>
+            <th>Return Date</th>
+            <th>Fine (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Poonam Pawar</td>
+            <td>Harry Potter</td>
+            <td>2025-09-20</td>
+            <td>2025-10-05</td>
+            <td>0</td>
+          </tr>
+          <tr>
+            <td>Dhanshree Sonawane</td>
+            <td>The Alchemist</td>
+            <td>2025-09-15</td>
+            <td>2025-10-02</td>
+            <td>50</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Add Fine Record</h3>
+      <form>
+        <input type="text" placeholder="Borrower Name" required>
+        <input type="text" placeholder="Book Title" required>
+        <input type="date" placeholder="Issued Date" required>
+        <input type="date" placeholder="Return Date" required>
+        <input type="number" placeholder="Fine Amount (₹)" required>
+        <button type="submit">Add Record</button>
       </form>
     </section>
   </div>
