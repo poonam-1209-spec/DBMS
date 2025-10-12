@@ -23,6 +23,7 @@
     form input, form select { padding:10px; margin:8px 0; width:100%; box-sizing:border-box; }
     form button { background-color:#3f51b5; color:white; padding:10px 20px; border:none; cursor:pointer; margin-top:10px; }
     form button:hover { background-color:#303f9f; }
+    .no-data { text-align:center; color:#555; padding:10px; }
   </style>
 </head>
 
@@ -54,12 +55,13 @@
         </thead>
         <tbody></tbody>
       </table>
+      <div id="no-books" class="no-data"></div>
     </section>
 
     <!-- Add Book Section -->
     <section id="add-book">
       <h2>Add New Book</h2>
-      <form>
+      <form id="add-book-form">
         <input type="text" placeholder="Book Title" required>
         <input type="text" placeholder="Author" required>
         <input type="text" placeholder="Genre" required>
@@ -74,11 +76,11 @@
     <!-- Search Book Section -->
     <section id="search-book">
       <h2>Search Book</h2>
-      <form>
+      <form id="search-book-form">
         <input type="text" placeholder="Search by title or author">
         <label for="genre">Select Book Type:</label>
         <select id="genre" name="genre">
-          <option value="">-- Select Genre --</option>
+          <option value="">-- All Genres --</option>
           <option value="Fiction">Fiction</option>
           <option value="Fantasy">Fantasy</option>
           <option value="Science">Science</option>
@@ -108,9 +110,10 @@
         </thead>
         <tbody></tbody>
       </table>
+      <div id="no-fines" class="no-data"></div>
 
       <h3>Add Fine Record</h3>
-      <form>
+      <form id="add-fine-form">
         <input type="text" placeholder="Borrower Name" required>
         <input type="text" placeholder="Book Title" required>
         <input type="date" placeholder="Issued Date" required>
@@ -125,19 +128,26 @@
     /* --- Book Management --- */
     let books = [];
     const bookTableBody = document.querySelector("#book-list tbody");
+    const noBooksDiv = document.getElementById("no-books");
 
-    function fetchBooks() {
-      fetch("http://localhost:5000/api/books")
-        .then(res => res.json())
-        .then(data => {
-          books = data;
-          renderBooks(books);
-        })
-        .catch(err => console.error("Error fetching books:", err));
+    async function fetchBooks() {
+      try {
+        const res = await fetch("http://localhost:5000/api/books");
+        books = await res.json();
+        renderBooks(books);
+      } catch (err) {
+        alert("Error fetching books from server!");
+        console.error(err);
+      }
     }
 
     function renderBooks(list) {
       bookTableBody.innerHTML = "";
+      if (!list.length) {
+        noBooksDiv.textContent = "No books available.";
+        return;
+      }
+      noBooksDiv.textContent = "";
       list.forEach(book => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -152,35 +162,37 @@
     }
 
     // Add book
-    document.querySelector("#add-book form").addEventListener("submit", function(e) {
+    document.getElementById("add-book-form").addEventListener("submit", async function(e) {
       e.preventDefault();
       const title = this.querySelector('input[placeholder="Book Title"]').value.trim();
       const author = this.querySelector('input[placeholder="Author"]').value.trim();
       const genre = this.querySelector('input[placeholder="Genre"]').value.trim();
       const availability = this.querySelector('select').value;
 
-      fetch("http://localhost:5000/api/books", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, author, genre, availability })
-      })
-      .then(res => res.json())
-      .then(data => {
+      try {
+        const res = await fetch("http://localhost:5000/api/books", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, author, genre, availability })
+        });
+        const data = await res.json();
         alert(data.message);
         this.reset();
         fetchBooks();
-      })
-      .catch(err => console.error("Error adding book:", err));
+      } catch (err) {
+        alert("Error adding book!");
+        console.error(err);
+      }
     });
 
     // Search books
-    document.querySelector("#search-book form").addEventListener("submit", function(e) {
+    document.getElementById("search-book-form").addEventListener("submit", function(e) {
       e.preventDefault();
       const query = this.querySelector('input').value.trim().toLowerCase();
-      const genre = this.querySelector('select').value;
+      const genre = this.querySelector('select').value.toLowerCase();
       const filtered = books.filter(book =>
         (book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)) &&
-        (genre === "" || book.genre === genre)
+        (genre === "" || book.genre.toLowerCase() === genre)
       );
       renderBooks(filtered);
     });
@@ -188,19 +200,26 @@
     /* --- Fine Management --- */
     let fines = [];
     const fineTableBody = document.querySelector("#fine-management tbody");
+    const noFinesDiv = document.getElementById("no-fines");
 
-    function fetchFines() {
-      fetch("http://localhost:5000/api/fines")
-        .then(res => res.json())
-        .then(data => {
-          fines = data;
-          renderFines(fines);
-        })
-        .catch(err => console.error("Error fetching fines:", err));
+    async function fetchFines() {
+      try {
+        const res = await fetch("http://localhost:5000/api/fines");
+        fines = await res.json();
+        renderFines(fines);
+      } catch (err) {
+        alert("Error fetching fines!");
+        console.error(err);
+      }
     }
 
     function renderFines(list) {
       fineTableBody.innerHTML = "";
+      if (!list.length) {
+        noFinesDiv.textContent = "No fine records available.";
+        return;
+      }
+      noFinesDiv.textContent = "";
       list.forEach(f => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -215,7 +234,7 @@
     }
 
     // Add fine
-    document.querySelector("#fine-management form").addEventListener("submit", function(e) {
+    document.getElementById("add-fine-form").addEventListener("submit", async function(e) {
       e.preventDefault();
       const borrower = this.querySelector('input[placeholder="Borrower Name"]').value.trim();
       const title = this.querySelector('input[placeholder="Book Title"]').value.trim();
@@ -223,18 +242,25 @@
       const returned = this.querySelector('input[placeholder="Return Date"]').value;
       const fine = Number(this.querySelector('input[placeholder="Fine Amount (₹)"]').value);
 
-      fetch("http://localhost:5000/api/fines", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ borrower, title, issued, returned, fine })
-      })
-      .then(res => res.json())
-      .then(data => {
+      if (new Date(returned) < new Date(issued)) {
+        alert("Return date cannot be before issued date!");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/api/fines", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ borrower, title, issued, returned, fine })
+        });
+        const data = await res.json();
         alert(data.message);
         this.reset();
         fetchFines();
-      })
-      .catch(err => console.error("Error adding fine:", err));
+      } catch (err) {
+        alert("Error adding fine record!");
+        console.error(err);
+      }
     });
 
     // Initial fetch
