@@ -6,113 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Library Management System</title>
   <style>
-    /* General Styles */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f9;
-    }
-
-    /* Header */
-    header {
-      background-color: #3f51b5;
-      color: white;
-      padding: 20px 0;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-    }
-
-    /* Navigation */
-    nav {
-      background-color: #303f9f;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    nav a {
-      color: white;
-      padding: 14px 20px;
-      text-decoration: none;
-      text-transform: uppercase;
-    }
-
-    nav a:hover {
-      background-color: #1a237e;
-    }
-
-    /* Main Content */
-    .container {
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 0 20px;
-    }
-
-    h2 {
-      color: #303f9f;
-    }
-
-    /* Table */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    table,
-    th,
-    td {
-      border: 1px solid #ddd;
-    }
-
-    th,
-    td {
-      padding: 12px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #3f51b5;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-
-    /* Forms */
-    form {
-      background-color: white;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    form input,
-    form select {
-      padding: 10px;
-      margin: 8px 0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    form button {
-      background-color: #3f51b5;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    form button:hover {
-      background-color: #303f9f;
-    }
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background-color:#f4f4f9; }
+    header { background-color:#3f51b5; color:white; padding:20px 0; text-align:center; }
+    header h1 { margin:0; }
+    nav { background-color:#303f9f; display:flex; justify-content:center; flex-wrap:wrap; }
+    nav a { color:white; padding:14px 20px; text-decoration:none; text-transform:uppercase; }
+    nav a:hover { background-color:#1a237e; }
+    .container { max-width:1000px; margin:20px auto; padding:0 20px; }
+    h2 { color:#303f9f; }
+    table { width:100%; border-collapse:collapse; margin-top:20px; }
+    table, th, td { border:1px solid #ddd; }
+    th, td { padding:12px; text-align:left; }
+    th { background-color:#3f51b5; color:white; }
+    tr:nth-child(even) { background-color:#f2f2f2; }
+    form { background-color:white; padding:20px; margin-top:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    form input, form select { padding:10px; margin:8px 0; width:100%; box-sizing:border-box; }
+    form button { background-color:#3f51b5; color:white; padding:10px 20px; border:none; cursor:pointer; margin-top:10px; }
+    form button:hover { background-color:#303f9f; }
   </style>
 </head>
 
@@ -142,9 +52,7 @@
             <th>Availability</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Books will be rendered here dynamically -->
-        </tbody>
+        <tbody></tbody>
       </table>
     </section>
 
@@ -198,9 +106,7 @@
             <th>Fine (₹)</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Fines will be rendered here dynamically -->
-        </tbody>
+        <tbody></tbody>
       </table>
 
       <h3>Add Fine Record</h3>
@@ -215,110 +121,126 @@
     </section>
   </div>
 
-  <!-- ===== SCRIPT ===== -->
- <script>
-/* --- Book Management --- */
-let books = [];
-function fetchBooks() {
-  fetch("http://localhost:5000/api/books")
-    .then(res => res.json())
-    .then(data => {
-      books = data;
-      renderBooks(books);
+  <script>
+    /* --- Book Management --- */
+    let books = [];
+    const bookTableBody = document.querySelector("#book-list tbody");
+
+    function fetchBooks() {
+      fetch("http://localhost:5000/api/books")
+        .then(res => res.json())
+        .then(data => {
+          books = data;
+          renderBooks(books);
+        })
+        .catch(err => console.error("Error fetching books:", err));
+    }
+
+    function renderBooks(list) {
+      bookTableBody.innerHTML = "";
+      list.forEach(book => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${book.id}</td>
+          <td>${book.title}</td>
+          <td>${book.author}</td>
+          <td>${book.genre}</td>
+          <td>${book.availability}</td>
+        `;
+        bookTableBody.appendChild(tr);
+      });
+    }
+
+    // Add book
+    document.querySelector("#add-book form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const title = this.querySelector('input[placeholder="Book Title"]').value.trim();
+      const author = this.querySelector('input[placeholder="Author"]').value.trim();
+      const genre = this.querySelector('input[placeholder="Genre"]').value.trim();
+      const availability = this.querySelector('select').value;
+
+      fetch("http://localhost:5000/api/books", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, author, genre, availability })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        this.reset();
+        fetchBooks();
+      })
+      .catch(err => console.error("Error adding book:", err));
     });
-}
 
-// Render books table
-const bookTableBody = document.querySelector("#book-list tbody");
-function renderBooks(list) {
-  bookTableBody.innerHTML = "";
-  list.forEach(book => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${book.id}</td>
-      <td>${book.title}</td>
-      <td>${book.author}</td>
-      <td>${book.genre}</td>
-      <td>${book.availability}</td>
-    `;
-    bookTableBody.appendChild(tr);
-  });
-}
-fetchBooks();
+    // Search books
+    document.querySelector("#search-book form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const query = this.querySelector('input').value.trim().toLowerCase();
+      const genre = this.querySelector('select').value;
+      const filtered = books.filter(book =>
+        (book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)) &&
+        (genre === "" || book.genre === genre)
+      );
+      renderBooks(filtered);
+    });
 
-// Add book
-document.querySelector("#add-book form").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const title = this.querySelector('input[placeholder="Book Title"]').value.trim();
-  const author = this.querySelector('input[placeholder="Author"]').value.trim();
-  const genre = this.querySelector('input[placeholder="Genre"]').value.trim();
-  const availability = this.querySelector('select').value;
+    /* --- Fine Management --- */
+    let fines = [];
+    const fineTableBody = document.querySelector("#fine-management tbody");
 
-  fetch("http://localhost:5000/api/books", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, author, genre, availability })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message);
-    this.reset();
+    function fetchFines() {
+      fetch("http://localhost:5000/api/fines")
+        .then(res => res.json())
+        .then(data => {
+          fines = data;
+          renderFines(fines);
+        })
+        .catch(err => console.error("Error fetching fines:", err));
+    }
+
+    function renderFines(list) {
+      fineTableBody.innerHTML = "";
+      list.forEach(f => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${f.borrower}</td>
+          <td>${f.title}</td>
+          <td>${f.issued}</td>
+          <td>${f.returned}</td>
+          <td>${f.fine}</td>
+        `;
+        fineTableBody.appendChild(tr);
+      });
+    }
+
+    // Add fine
+    document.querySelector("#fine-management form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const borrower = this.querySelector('input[placeholder="Borrower Name"]').value.trim();
+      const title = this.querySelector('input[placeholder="Book Title"]').value.trim();
+      const issued = this.querySelector('input[placeholder="Issued Date"]').value;
+      const returned = this.querySelector('input[placeholder="Return Date"]').value;
+      const fine = Number(this.querySelector('input[placeholder="Fine Amount (₹)"]').value);
+
+      fetch("http://localhost:5000/api/fines", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ borrower, title, issued, returned, fine })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        this.reset();
+        fetchFines();
+      })
+      .catch(err => console.error("Error adding fine:", err));
+    });
+
+    // Initial fetch
     fetchBooks();
-  });
-});
-
-/* --- Fine Management --- */
-let fines = [];
-function fetchFines() {
-  fetch("http://localhost:5000/api/fines")
-    .then(res => res.json())
-    .then(data => {
-      fines = data;
-      renderFines(fines);
-    });
-}
-
-// Render fines table
-const fineTableBody = document.querySelector("#fine-management tbody");
-function renderFines(list) {
-  fineTableBody.innerHTML = "";
-  list.forEach(f => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${f.borrower}</td>
-      <td>${f.title}</td>
-      <td>${f.issued}</td>
-      <td>${f.returned}</td>
-      <td>${f.fine}</td>
-    `;
-    fineTableBody.appendChild(tr);
-  });
-}
-fetchFines();
-
-// Add fine
-document.querySelector("#fine-management form").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const borrower = this.querySelector('input[placeholder="Borrower Name"]').value.trim();
-  const title = this.querySelector('input[placeholder="Book Title"]').value.trim();
-  const issued = this.querySelector('input[placeholder="Issued Date"]').value;
-  const returned = this.querySelector('input[placeholder="Return Date"]').value;
-  const fine = Number(this.querySelector('input[placeholder="Fine Amount (₹)"]').value);
-
-  fetch("http://localhost:5000/api/fines", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ borrower, title, issued, returned, fine })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message);
-    this.reset();
     fetchFines();
-  });
-});
-</script>
+  </script>
 
 </body>
-
 </html>

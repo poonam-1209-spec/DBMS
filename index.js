@@ -1,66 +1,110 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+// const express = require("express");
+// const cors = require("cors");
+// const bodyParser = require("body-parser");
+// const fs = require("fs");
+// const path = require("path");
 
-const app = express();
-const PORT = 5000;
+// const app = express();
+// const PORT = 5000;
 
-app.use(cors());
-app.use(bodyParser.json());
+// app.use(cors());
+// app.use(bodyParser.json());
 
-// --- In-memory database ---
-let books = [
-  { id: 1, title: "Harry Potter", author: "J.K. Rowling", genre: "Fantasy", availability: "Available" },
-  { id: 2, title: "The Alchemist", author: "Paulo Coelho", genre: "Fiction", availability: "Issued" },
-  { id: 3, title: "A Brief History of Time", author: "Stephen Hawking", genre: "Science", availability: "Available" },
-  { id: 4, title: "Wings of Fire", author: "A.P.J. Abdul Kalam", genre: "Biography", availability: "Available" },
-  { id: 5, title: "The Art of War", author: "Sun Tzu", genre: "History", availability: "Issued" }
-];
+// // --- File paths ---
+// const booksFile = path.join(__dirname, "books.json");
+// const finesFile = path.join(__dirname, "fines.json");
 
-let fines = [
-  { borrower: "Poonam Pawar", title: "Harry Potter", issued: "2025-09-20", returned: "2025-10-05", fine: 0 },
-  { borrower: "Dhanshree Sonawane", title: "The Alchemist", issued: "2025-09-15", returned: "2025-10-02", fine: 50 }
-];
+// // --- Helper functions ---
+// function readJSON(file) {
+//   try {
+//     const data = fs.readFileSync(file, "utf8");
+//     return JSON.parse(data);
+//   } catch (err) {
+//     console.error(`Error reading ${file}:`, err.message);
+//     return [];
+//   }
+// }
 
-// --- Routes ---
+// function writeJSON(file, data) {
+//   try {
+//     fs.writeFileSync(file, JSON.stringify(data, null, 2), "utf8");
+//   } catch (err) {
+//     console.error(`Error writing ${file}:`, err.message);
+//   }
+// }
 
-// Base route
-app.get("/", (req, res) => {
-  res.send("Library Management Backend is running 🚀");
-});
+// // --- Routes ---
 
-// Get all books
-app.get("/api/books", (req, res) => {
-  res.json(books);
-});
+// // Base route
+// app.get("/", (req, res) => {
+//   res.send("Library Management Backend is running 🚀");
+// });
 
-// Add a new book
-app.post("/api/books", (req, res) => {
-  const { title, author, genre, availability } = req.body;
-  const newBook = {
-    id: books.length + 1,
-    title,
-    author,
-    genre,
-    availability
-  };
-  books.push(newBook);
-  res.json({ message: "Book added successfully!" });
-});
+// // Get all books
+// app.get("/api/books", (req, res) => {
+//   const books = readJSON(booksFile);
+//   res.json(books);
+// });
 
-// Get all fines
-app.get("/api/fines", (req, res) => {
-  res.json(fines);
-});
+// // Add a new book
+// app.post("/api/books", (req, res) => {
+//   const { title, author, genre, availability } = req.body;
 
-// Add a fine record
-app.post("/api/fines", (req, res) => {
-  const { borrower, title, issued, returned, fine } = req.body;
-  fines.push({ borrower, title, issued, returned, fine });
-  res.json({ message: "Fine record added successfully!" });
-});
+//   if (!title || !author || !genre || !availability) {
+//     return res.status(400).json({ message: "All book fields are required!" });
+//   }
 
-// --- Start server ---
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+//   const books = readJSON(booksFile);
+//   const newBook = {
+//     id: books.length ? books[books.length - 1].id + 1 : 1,
+//     title,
+//     author,
+//     genre,
+//     availability
+//   };
+//   books.push(newBook);
+//   writeJSON(booksFile, books);
+//   res.status(201).json({ message: "Book added successfully!", book: newBook });
+// });
+
+// // Get all fines
+// app.get("/api/fines", (req, res) => {
+//   const fines = readJSON(finesFile);
+//   res.json(fines);
+// });
+
+// // Add a fine record
+// app.post("/api/fines", (req, res) => {
+//   const { borrower, title, issued, returned, fine } = req.body;
+
+//   if (!borrower || !title || !issued || !returned || fine === undefined) {
+//     return res.status(400).json({ message: "All fine fields are required!" });
+//   }
+
+//   const fines = readJSON(finesFile);
+//   const newFine = { borrower, title, issued, returned, fine };
+//   fines.push(newFine);
+//   writeJSON(finesFile, fines);
+//   res.status(201).json({ message: "Fine record added successfully!", fine: newFine });
+// });
+
+// // --- Start server ---
+// app.listen(PORT, () => {
+//   console.log(`Server running at http://localhost:${PORT}`);
+// });
+
+
+
+import express from "express"
+
+const app = express()
+
+app.get("/",(req,res)=>{
+  res.send("Server is ready")
+})
+
+const port = process.env.PORT || 3000
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });

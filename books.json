@@ -1,0 +1,5 @@
+
+[
+  { "id": 1, "title": "Harry Potter", "author": "J.K. Rowling", "genre": "Fantasy", "availability": "Available" },
+  { "id": 2, "title": "The Alchemist", "author": "Paulo Coelho", "genre": "Fiction", "availability": "Issued" }
+]
